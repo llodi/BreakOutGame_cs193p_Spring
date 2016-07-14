@@ -10,12 +10,18 @@ import UIKit
 
 class BallView: UIView {
     
-    var balls = [String:UIBezierPath]() { didSet{ setNeedsDisplay() } }
-    
-    override func drawRect(rect: CGRect) {
-        for (_, path) in balls {
-            path.stroke()
-        }
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        setAppearance()
+        
     }
     
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    private func setAppearance() {
+        self.backgroundColor = UIColor.redColor()
+        self.layer.cornerRadius = self.frame.width / 2
+    }
 }
