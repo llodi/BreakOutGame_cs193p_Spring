@@ -17,21 +17,21 @@
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="RPl-TF-99T" customClass="GameView" customModule="BreakOutGame" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="28" width="600" height="572"/>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="M3V-jK-fiL" customClass="GameView" customModule="BreakOutGame" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="20" width="600" height="580"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                             </view>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                         <constraints>
-                            <constraint firstItem="RPl-TF-99T" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" constant="8" symbolic="YES" id="HIA-dK-ljO"/>
-                            <constraint firstItem="RPl-TF-99T" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="PRk-H6-oYt"/>
-                            <constraint firstAttribute="trailing" secondItem="RPl-TF-99T" secondAttribute="trailing" id="UD6-Cy-h8s"/>
-                            <constraint firstItem="RPl-TF-99T" firstAttribute="bottom" secondItem="wfy-db-euE" secondAttribute="top" id="quN-fU-Xoa"/>
+                            <constraint firstItem="M3V-jK-fiL" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="6Jj-Gl-q4E"/>
+                            <constraint firstItem="M3V-jK-fiL" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" id="Ohj-XS-rsG"/>
+                            <constraint firstAttribute="trailing" secondItem="M3V-jK-fiL" secondAttribute="trailing" id="dzz-13-PhB"/>
+                            <constraint firstItem="M3V-jK-fiL" firstAttribute="bottom" secondItem="wfy-db-euE" secondAttribute="top" id="eAS-bs-AtJ"/>
                         </constraints>
                     </view>
                     <connections>
-                        <outlet property="gameView" destination="RPl-TF-99T" id="HTJ-vk-kaF"/>
+                        <outlet property="gameView" destination="M3V-jK-fiL" id="ukc-Ha-gNg"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>

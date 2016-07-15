@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		5329182F1D38A72B004FBAF9 /* UIKit Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5329182E1D38A72B004FBAF9 /* UIKit Extensions.swift */; };
 		532A39CB1D37AFE1006BDF65 /* BreakOutBehavior.swift in Sources */ = {isa = PBXBuildFile; fileRef = 532A39CA1D37AFE1006BDF65 /* BreakOutBehavior.swift */; };
 		532A39CD1D37B00F006BDF65 /* BallView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 532A39CC1D37B00F006BDF65 /* BallView.swift */; };
 		532F55781D376B7700B4C475 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 532F55771D376B7700B4C475 /* AppDelegate.swift */; };
@@ -18,6 +19,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		5329182E1D38A72B004FBAF9 /* UIKit Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIKit Extensions.swift"; sourceTree = "<group>"; };
 		532A39CA1D37AFE1006BDF65 /* BreakOutBehavior.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BreakOutBehavior.swift; sourceTree = "<group>"; };
 		532A39CC1D37B00F006BDF65 /* BallView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BallView.swift; sourceTree = "<group>"; };
 		532F55741D376B7700B4C475 /* BreakOutGame.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BreakOutGame.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -65,6 +67,7 @@
 				532F558C1D376CED00B4C475 /* GameViewController.swift */,
 				532A39CA1D37AFE1006BDF65 /* BreakOutBehavior.swift */,
 				532A39CC1D37B00F006BDF65 /* BallView.swift */,
+				5329182E1D38A72B004FBAF9 /* UIKit Extensions.swift */,
 				532F55891D376B8700B4C475 /* Supporting Files */,
 			);
 			path = BreakOutGame;
@@ -157,6 +160,7 @@
 				532A39CB1D37AFE1006BDF65 /* BreakOutBehavior.swift in Sources */,
 				532A39CD1D37B00F006BDF65 /* BallView.swift in Sources */,
 				532F55781D376B7700B4C475 /* AppDelegate.swift in Sources */,
+				5329182F1D38A72B004FBAF9 /* UIKit Extensions.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

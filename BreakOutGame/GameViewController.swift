@@ -12,16 +12,19 @@ class GameViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        gameView.setInitialPaddlePosition()
-        //gameView.addBall()
+        
+        //gameView.addBricksInRow()
+        print("\(gameView.bounds.size.width) subview width")
+        print("\(view.bounds.size.width) superview width")
         
     }
 
     @IBOutlet weak var gameView: GameView! {
         didSet {
+            gameView.setInitialPaddlePosition()
             gameView.addGestureRecognizer(UIPanGestureRecognizer(target: gameView, action: #selector(GameView.grubPaddle(_:))))
             gameView.addGestureRecognizer(UITapGestureRecognizer(target: gameView, action: #selector(GameView.addBall(_:))))
-            //gameView.addGestureRecognizer(UIPanGestureRecognizer(target: gameView, action: #selector(GameView.placePaddle(_:))))
+            gameView.backgroundColor = UIColor.yellowColor()
         }
     }
     

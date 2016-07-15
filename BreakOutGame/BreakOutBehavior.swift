@@ -11,17 +11,23 @@ import UIKit
 class BreakOutBehavior: UIDynamicBehavior {
     
     //гравитация - поведение при падеии объектов
-    private let gravity = UIGravityBehavior()
+    private let gravity: UIGravityBehavior = {
+        let gravity = UIGravityBehavior()
+        gravity.magnitude = 1.0
+        return gravity
+    }()
     
     //столкновение - поведение,
     //когда объекты добавленные сюда сталкиваются
-    private let collider: UICollisionBehavior = {
+    let collider: UICollisionBehavior = {
         
         let collider = UICollisionBehavior()
         
         //задает границы, за кот-е добавленные объекты на проваливаютя
         //границы - view, что добавлено как reference в анимацию
-        //collider.translatesReferenceBoundsIntoBoundary = false
+        collider.translatesReferenceBoundsIntoBoundary = false
+        
+        //collider.collisionDelegate = GameView
         
         return collider
     }()
@@ -35,7 +41,7 @@ class BreakOutBehavior: UIDynamicBehavior {
         dib.allowsRotation = false
         
         //прыгучесть: 1.0-сильно, 0.1 - слабо
-        dib.elasticity = 1
+        dib.elasticity = 1.2
         
         return dib
     }()
