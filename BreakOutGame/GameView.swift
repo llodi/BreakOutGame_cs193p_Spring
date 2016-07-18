@@ -30,30 +30,45 @@ class GameView: UIView, UICollisionBehaviorDelegate, UIDynamicAnimatorDelegate {
     }
     
     func dynamicAnimatorDidPause(animator: UIDynamicAnimator) {
-        //removeBall()
+        removeBall()
     }
     
-//    var bricks = [[UIView?]]()
-//    
-//    var brickSize: CGSize {
-//        //let offsets = ViewConstant.BrickOffset * CGFloat(ViewConstant.BricksPerRow + 1)
-//        //let widthWithoutOffsets = bounds.size.width - offsets
-//        let width = bounds.size.width / CGFloat(ViewConstant.BricksPerRow)
-//        print("\(bounds.size.width)")
-//        return CGSize(width: width, height: ViewConstant.PaddleHeight)
-//    }
-//    
-//    func addBricksInRow() {
-//        var x = ViewConstant.BrickOffset
-//        for _ in 1...1//ViewConstant.BricksPerRow
-//        {
-//            let frame = CGRect(origin: CGPoint(x: x, y: ViewConstant.BrickInitialYPosition), size:  brickSize)
-//            let brick = UIView(frame: frame)
-//            brick.backgroundColor = UIColor.random
-//            addSubview(brick)
-//            x 	= brickSize.width + ViewConstant.BrickOffset * 2
-//        }
-//    }
+    var bricks = [[BrickView?]]()
+    
+    var brickSize: CGSize {
+        let offsetCount = CGFloat(bricksBetweenSpacing) * CGFloat(ViewConstant.BricksPerRow + 1)
+        let width = (bounds.size.width - offsetCount) /
+            CGFloat(ViewConstant.BricksPerRow)
+        return CGSize(width: width, height: ViewConstant.PaddleHeight)
+    }
+    
+    private var brickRowYPosition: CGFloat = 80.0
+    
+    var bricksLine = 0
+    var bricksBetweenSpacing: CGFloat = 0.0
+    
+    func addBricks() {
+        for i in 1...bricksLine {
+            addBricksInRow(brickRowYPosition, withRowId: i * 10)
+            brickRowYPosition += CGFloat(bricksBetweenSpacing) + ViewConstant.PaddleHeight
+        }
+    }
+    
+    private func addBricksInRow(atPoint: CGFloat, withRowId: Int) {
+        
+        var x = CGFloat(bricksBetweenSpacing)
+        var bricks_ = [BrickView?]()
+        for i in 1...ViewConstant.BricksPerRow
+        {
+            let frame = CGRect(origin: CGPoint(x: x, y: brickRowYPosition), size:  brickSize)
+            let brick = BrickView(frame: frame)
+            addSubview(brick)
+            x += brickSize.width + CGFloat(bricksBetweenSpacing)
+            breakoutBehaviour.addViewBarrier(brick.path!, named: i + withRowId)
+            bricks_.append(brick)
+        }
+        bricks.append(bricks_)
+    }
     
     private func addOneBoundary(from from_: CGPoint, to to_: CGPoint) -> UIBezierPath {
         let line = UIBezierPath()
@@ -62,7 +77,7 @@ class GameView: UIView, UICollisionBehaviorDelegate, UIDynamicAnimatorDelegate {
         return line
     }
     
-    private func addMainViewBoundaries() {
+    func addMainViewBoundaries() {
         let topLetfPoint = CGPoint(x: bounds.origin.x, y: bounds.origin.y)
         let topRightPoint = CGPoint(x: bounds.size.width, y: bounds.origin.y)
         let bottomLeftPoint = CGPoint(x: bounds.origin.x, y: bounds.size.height)
@@ -73,7 +88,7 @@ class GameView: UIView, UICollisionBehaviorDelegate, UIDynamicAnimatorDelegate {
         breakoutBehaviour.addViewBarrier(addOneBoundary(
             from: topRightPoint, to: bottomRightPoint), named: ViewConstant.RightBoundaryName)
         breakoutBehaviour.addViewBarrier(addOneBoundary(
-            from: topLetfPoint, to: topLetfPoint), named: ViewConstant.TopBoundaryName)
+            from: topLetfPoint, to: topRightPoint), named: ViewConstant.TopBoundaryName)
         breakoutBehaviour.addViewBarrier(addOneBoundary(
             from: bottomLeftPoint, to: bottomRightPoint), named: ViewConstant.BottomBoundaryName)
     }
@@ -89,12 +104,11 @@ class GameView: UIView, UICollisionBehaviorDelegate, UIDynamicAnimatorDelegate {
         static let TopBoundaryName = "Top Boundary"
         static let BottomBoundaryName = "Bottom Boundary"
         static let PaddleBoundaryName = "Paddle"
-        static let BrickOffset: CGFloat = 2.0
-        static let BricksPerRow = 5
-        static let BrickInitialYPosition: CGFloat = 30.0
+        //static let BrickOffset: CGFloat = 5.0
+        static let BricksPerRow = 7
     }
     
-    var ball: BallView?
+    private var ball: BallView?
     
     func addBall(recognizer: UITapGestureRecognizer) {
         
@@ -104,7 +118,8 @@ class GameView: UIView, UICollisionBehaviorDelegate, UIDynamicAnimatorDelegate {
                     y: bounds.midY),
                     size: ViewConstant.BallSize))
                 addSubview(ball!)
-                breakoutBehaviour.addItem(ball!)
+                breakoutBehaviour.addBallBehaviour(ball!)
+                breakoutBehaviour.addViewBarrier(UIBezierPath(ovalInRect: paddle!.frame), named: ViewConstant.PaddleBoundaryName)
             }
         }
     }
@@ -114,6 +129,11 @@ class GameView: UIView, UICollisionBehaviorDelegate, UIDynamicAnimatorDelegate {
         ball?.removeFromSuperview()
     }
     
+    func removeBrick(brick: BrickView) {
+        breakoutBehaviour.removeItem(brick)
+        brick.removeFromSuperview()
+    }
+    
     private var paddleSize: CGSize {
         let paddleWidth = ViewConstant.PaddleHeight * ViewConstant.PaddleWidthFactor
         return CGSize(width: paddleWidth, height: ViewConstant.PaddleHeight)
@@ -121,24 +141,24 @@ class GameView: UIView, UICollisionBehaviorDelegate, UIDynamicAnimatorDelegate {
     
     func setInitialPaddlePosition() {
         
-        print("\(bounds.size.width)")
-        
         if paddle == nil {
-            let originY = bounds.maxY - ViewConstant.PaddleHeight * 2
+            let originY = bounds.maxY - ViewConstant.PaddleHeight * 5
             let origin = CGPoint(x: bounds.midX, y: originY)
             let frame = CGRect(origin: origin, size: paddleSize)
             
             paddle = UIView(frame: frame)
             paddle!.backgroundColor = UIColor.blueColor()
-            print("\(paddle?.frame.origin) paddle")
             addSubview(paddle!)
         }
     }
-   
+
     override func layoutSubviews() {
         super.layoutSubviews()
-        //addMainViewBoundaries()
-        //breakoutBehaviour.collider.collisionDelegate = self
+        //logVCL("layoutSubviews() self.bounds.size = \(self.bounds.size) - superview bounds.size = \(superview?.bounds.size ?? CGSize.zero)")
+        addMainViewBoundaries()
+        breakoutBehaviour.collider.collisionDelegate = self
+//        print("\(bounds.size.width) subview width view layout")
+//        print("\(superview?.bounds.size.width) superview width view layout")
         
     }
     
@@ -147,14 +167,19 @@ class GameView: UIView, UICollisionBehaviorDelegate, UIDynamicAnimatorDelegate {
         if id == ViewConstant.BottomBoundaryName {
             print ("OUT! GAME OVER!!")
             animating = false            
+        } else if let id = identifier as? Int {
+            if let b = bricks[Int(id/10) - 1][Int(id%10) - 1] {
+                b.removeFromSuperview()
+                print("Strike on \(id)")
+            }
+
         }
-        
     }
     
     private func movePaddleTo(point: CGPoint) {
         if let pad = paddle {
             var newFrame = pad.frame
-            newFrame.origin.x = max(min(newFrame.origin.x + point.x, bounds.maxX - point.x), 0.0)
+            newFrame.origin.x = max(min(newFrame.origin.x + point.x, bounds.maxX - point.x - pad.bounds.size.height), 0.0)
             pad.frame = newFrame
             breakoutBehaviour.addViewBarrier(UIBezierPath(ovalInRect: paddle!.frame), named: ViewConstant.PaddleBoundaryName)
         }

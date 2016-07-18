@@ -27,8 +27,6 @@ class BreakOutBehavior: UIDynamicBehavior {
         //границы - view, что добавлено как reference в анимацию
         collider.translatesReferenceBoundsIntoBoundary = false
         
-        //collider.collisionDelegate = GameView
-        
         return collider
     }()
     
@@ -42,6 +40,9 @@ class BreakOutBehavior: UIDynamicBehavior {
         
         //прыгучесть: 1.0-сильно, 0.1 - слабо
         dib.elasticity = 1.2
+        dib.friction = 0.0
+        dib.resistance = 0
+        
         
         return dib
     }()
@@ -55,9 +56,8 @@ class BreakOutBehavior: UIDynamicBehavior {
         addChildBehavior(itemBehaviour)
     }
     
-    //метод добавляет элементы (UIView) - кубики
-    //будут участвовать в анимации
-    func addItem(item: UIDynamicItem) {
+    
+    func addBallBehaviour(item: UIDynamicItem) {
         gravity.addItem(item)
         collider.addItem(item)
         itemBehaviour.addItem(item)
@@ -70,10 +70,9 @@ class BreakOutBehavior: UIDynamicBehavior {
         itemBehaviour.removeItem(item)
     }
     
-    func addViewBarrier(path: UIBezierPath, named name: String) {
+    func addViewBarrier(path: UIBezierPath, named name: NSCopying) {
         collider.removeBoundaryWithIdentifier(name)
         collider.addBoundaryWithIdentifier(name, forPath: path)
     }
-
     
 }
