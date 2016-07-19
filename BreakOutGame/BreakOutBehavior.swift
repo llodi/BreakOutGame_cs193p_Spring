@@ -17,6 +17,17 @@ class BreakOutBehavior: UIDynamicBehavior {
         return gravity
     }()
     
+    private let brickBehaviour: UIDynamicItemBehavior = {
+        let dbb = UIDynamicItemBehavior()
+        
+        //выключение ротации (кручения)
+        dbb.allowsRotation = false
+        
+        //прыгучесть: 1.0-сильно, 0.1 - слабо
+        dbb.elasticity = 0.5
+        return dbb
+    }()
+    
     //столкновение - поведение,
     //когда объекты добавленные сюда сталкиваются
     let collider: UICollisionBehavior = {
@@ -54,6 +65,18 @@ class BreakOutBehavior: UIDynamicBehavior {
         addChildBehavior(gravity)
         addChildBehavior(collider)
         addChildBehavior(itemBehaviour)
+        addChildBehavior(brickBehaviour)
+    }
+    
+    func addSpecialBrickBehaviour(item: UIDynamicItem) {
+        gravity.addItem(item)
+        //collider.addItem(item)
+        brickBehaviour.addItem(item)
+    }
+    
+    func removeSpecialBrickBehaviour(item: UIDynamicItem) {
+        gravity.removeItem(item)
+        brickBehaviour.removeItem(item)
     }
     
     
@@ -64,7 +87,7 @@ class BreakOutBehavior: UIDynamicBehavior {
     }
     
     //удаляем элементы из аниации
-    func removeItem(item: UIDynamicItem) {
+    func removeBallBehaviour(item: UIDynamicItem) {
         gravity.removeItem(item)
         collider.removeItem(item)
         itemBehaviour.removeItem(item)
@@ -73,6 +96,10 @@ class BreakOutBehavior: UIDynamicBehavior {
     func addViewBarrier(path: UIBezierPath, named name: NSCopying) {
         collider.removeBoundaryWithIdentifier(name)
         collider.addBoundaryWithIdentifier(name, forPath: path)
+    }
+    
+    func removeViewBarrier(name: NSCopying) {
+        collider.removeBoundaryWithIdentifier(name)
     }
     
 }

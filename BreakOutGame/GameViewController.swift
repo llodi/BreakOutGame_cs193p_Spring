@@ -13,61 +13,66 @@ class GameViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        logVCL("viewDidLoad() GameView bounds.size = \(gameView.bounds.size) - View bounds.size = \(view.bounds.size)")
         applaySettings()
     }
     
-    
+    private var gameStarted = true
 
     @IBOutlet weak var gameView: GameView! {
         didSet {
-            logVCL("gameView Outlet")
             gameView.addGestureRecognizer(UIPanGestureRecognizer(target: gameView, action: #selector(GameView.grubPaddle(_:))))
             gameView.addGestureRecognizer(UITapGestureRecognizer(target: gameView, action: #selector(GameView.addBall(_:))))
-            //gameView.backgroundColor = UIColor.yellowColor()
         }
     }
     
     private func applaySettings() {
         gameView.bricksBetweenSpacing = CGFloat(BreakOutSettings.breakoutSettings.bricksBetweenSpacing)
         gameView.bricksLine = BreakOutSettings.breakoutSettings.bricksLine
+        gameView.isSpecialBricks = BreakOutSettings.breakoutSettings.specialBricks
     }
-
     
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-        //logVCL("viewDidLayoutSubviews() GameView bounds.size = \(gameView.bounds.size) - View bounds.size = \(view.bounds.size)")
+    }
+    
+    
+    
+    private func updateUI() {
+        gameView.removeBricks()
         gameView.setInitialPaddlePosition()
         gameView.addMainViewBoundaries()
         gameView.addBricks()
+        gameStarted = false
     }
     
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
-        //logVCL("viewDidAppear(animated = \(animated)) GameView bounds.size = \(gameView.bounds.size) - View bounds.size = \(view.bounds.size)")
         gameView.animating = true
-    }   
-    
+        if gameStarted {
+            updateUI()
+        }
+    }
     
     override func viewDidDisappear(animated: Bool) {
         super.viewDidDisappear(animated)
-        //logVCL("viewDidDisappear(animated = \(animated)) GameView bounds.size = \(gameView.bounds.size) - View bounds.size = \(view.bounds.size)")
         gameView.animating = false
     }
     
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
-        //logVCL("viewWillAppear(animated = \(animated)) GameView bounds.size = \(gameView.bounds.size) - View bounds.size = \(view.bounds.size)")
     }
 
     override func viewWillDisappear(animated: Bool) {
         super.viewWillDisappear(animated)
-        //logVCL("viewWillDisappear(animated = \(animated)) GameView bounds.size = \(gameView.bounds.size) - View bounds.size = \(view.bounds.size)")
     }
 
     override func viewWillLayoutSubviews() {
         super.viewWillLayoutSubviews()
-        //logVCL("viewWillLayoutSubviews() GameView bounds.size = \(gameView.bounds.size) - View bounds.size = \(view.bounds.size)")
+        if BreakOutSettings.isSettingsChanged {
+            applaySettings()
+            updateUI()
+            BreakOutSettings.isSettingsChanged = false
+        }
     }
 
 }

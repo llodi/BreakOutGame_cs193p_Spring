@@ -12,29 +12,26 @@ class BrickView: UIView {
 
     
     struct BrickViewConsts {
-        static let BrickCornerRadius: CGFloat = 2.0
         static let LineWidth: CGFloat = 3.0
     }
     
-    var path: UIBezierPath?
+    var brickCornerRadius: CGFloat = 7.0
+    
+    //var path: UIBezierPath?
     
     override init (frame : CGRect) {
         super.init(frame : frame)
-        
-        self.layer.cornerRadius = BrickViewConsts.BrickCornerRadius
-        path = UIBezierPath(rect: frame)
-        self.backgroundColor = UIColor.random
+        //path = UIBezierPath(roundedRect: self.bounds, cornerRadius: brickCornerRadius)
+        self.backgroundColor = UIColor.redColor()
+        self.layer.cornerRadius = brickCornerRadius
     }
     
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
-    override func drawRect(rect: CGRect) {
-        path?.lineWidth = BrickViewConsts.LineWidth
-        UIColor.redColor().set()
-        path?.stroke()
-    }
- 
-
+//    override func drawRect(rect: CGRect) {
+//        
+//        path?.stroke()
+//    }
 }

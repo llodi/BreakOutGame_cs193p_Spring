@@ -33,24 +33,34 @@ class GameView: UIView, UICollisionBehaviorDelegate, UIDynamicAnimatorDelegate {
         removeBall()
     }
     
-    var bricks = [[BrickView?]]()
+    private var bricks = [[BrickView?]]()
     
-    var brickSize: CGSize {
+    func removeBricks() {
+        for b in bricks {
+            for brick in b {
+                brick?.removeFromSuperview()
+            }
+        }
+        bricks.removeAll()
+    }
+    
+    private var brickSize: CGSize {
         let offsetCount = CGFloat(bricksBetweenSpacing) * CGFloat(ViewConstant.BricksPerRow + 1)
         let width = (bounds.size.width - offsetCount) /
             CGFloat(ViewConstant.BricksPerRow)
         return CGSize(width: width, height: ViewConstant.PaddleHeight)
     }
     
-    private var brickRowYPosition: CGFloat = 80.0
     
     var bricksLine = 0
     var bricksBetweenSpacing: CGFloat = 0.0
+    var isSpecialBricks = false
     
     func addBricks() {
+        var yPosition = ViewConstant.BrickRowYPosition
         for i in 1...bricksLine {
-            addBricksInRow(brickRowYPosition, withRowId: i * 10)
-            brickRowYPosition += CGFloat(bricksBetweenSpacing) + ViewConstant.PaddleHeight
+            addBricksInRow(yPosition, withRowId: i * 10)
+            yPosition += bricksBetweenSpacing + ViewConstant.PaddleHeight
         }
     }
     
@@ -60,11 +70,12 @@ class GameView: UIView, UICollisionBehaviorDelegate, UIDynamicAnimatorDelegate {
         var bricks_ = [BrickView?]()
         for i in 1...ViewConstant.BricksPerRow
         {
-            let frame = CGRect(origin: CGPoint(x: x, y: brickRowYPosition), size:  brickSize)
+            let frame = CGRect(origin: CGPoint(x: x, y: atPoint), size:  brickSize)
             let brick = BrickView(frame: frame)
             addSubview(brick)
             x += brickSize.width + CGFloat(bricksBetweenSpacing)
-            breakoutBehaviour.addViewBarrier(brick.path!, named: i + withRowId)
+            let path = UIBezierPath(roundedRect: brick.frame, cornerRadius: brick.brickCornerRadius)
+            breakoutBehaviour.addViewBarrier(path, named: i + withRowId)
             bricks_.append(brick)
         }
         bricks.append(bricks_)
@@ -93,18 +104,18 @@ class GameView: UIView, UICollisionBehaviorDelegate, UIDynamicAnimatorDelegate {
             from: bottomLeftPoint, to: bottomRightPoint), named: ViewConstant.BottomBoundaryName)
     }
     
-    var paddle: UIView?
+    private var paddle: UIView?
     
-    struct ViewConstant {
+    private struct ViewConstant {
         static let PaddleHeight: CGFloat = 12.0
         static let PaddleWidthFactor: CGFloat = 5.0
         static let BallSize = CGSize(width: 12.0, height: 12.0)
+        static let BrickRowYPosition: CGFloat = 80.0
         static let LeftBoundaryName = "Left Boundary"
         static let RightBoundaryName = "Right Boundary"
         static let TopBoundaryName = "Top Boundary"
         static let BottomBoundaryName = "Bottom Boundary"
         static let PaddleBoundaryName = "Paddle"
-        //static let BrickOffset: CGFloat = 5.0
         static let BricksPerRow = 7
     }
     
@@ -125,13 +136,10 @@ class GameView: UIView, UICollisionBehaviorDelegate, UIDynamicAnimatorDelegate {
     }
     
     func removeBall() {
-        breakoutBehaviour.removeItem(ball!)
-        ball?.removeFromSuperview()
-    }
-    
-    func removeBrick(brick: BrickView) {
-        breakoutBehaviour.removeItem(brick)
-        brick.removeFromSuperview()
+        if let b = ball {
+            breakoutBehaviour.removeBallBehaviour(b)
+            b.removeFromSuperview()
+        }
     }
     
     private var paddleSize: CGSize {
@@ -154,12 +162,7 @@ class GameView: UIView, UICollisionBehaviorDelegate, UIDynamicAnimatorDelegate {
 
     override func layoutSubviews() {
         super.layoutSubviews()
-        //logVCL("layoutSubviews() self.bounds.size = \(self.bounds.size) - superview bounds.size = \(superview?.bounds.size ?? CGSize.zero)")
-        addMainViewBoundaries()
-        breakoutBehaviour.collider.collisionDelegate = self
-//        print("\(bounds.size.width) subview width view layout")
-//        print("\(superview?.bounds.size.width) superview width view layout")
-        
+        breakoutBehaviour.collider.collisionDelegate = self      
     }
     
     func collisionBehavior(behavior: UICollisionBehavior, beganContactForItem item: UIDynamicItem, withBoundaryIdentifier identifier: NSCopying?, atPoint p: CGPoint) {
@@ -169,11 +172,44 @@ class GameView: UIView, UICollisionBehaviorDelegate, UIDynamicAnimatorDelegate {
             animating = false            
         } else if let id = identifier as? Int {
             if let b = bricks[Int(id/10) - 1][Int(id%10) - 1] {
-                b.removeFromSuperview()
-                print("Strike on \(id)")
+                if b.backgroundColor == UIColor.redColor() {
+                    if isSpecialBricks {
+                        breakoutBehaviour.addSpecialBrickBehaviour(b)
+                        print("special brick!!!")
+                        //b.removeFromSuperview()
+                    } else {
+                        removeBrick(b, withId: id)
+                    }
+                } else {
+                    removeBrick(b, withId: id)
+                }
             }
-
         }
+    }
+    
+    private func removeBrick(brick: BrickView, withId id: Int) {
+        
+        UIView.transitionWithView(
+            brick,
+            duration: 0.2,
+            options: .TransitionFlipFromBottom,
+            animations: {
+                brick.alpha = 0.5
+            },
+            completion: { (success) in
+                UIView.animateWithDuration(
+                    1.0,
+                    animations: {
+                        brick.alpha = 0.0
+                    },
+                    completion: { (success) in
+                        brick.removeFromSuperview()
+                        self.breakoutBehaviour.removeViewBarrier(id)
+                        print("Strike on \(id)")
+                    }
+                )
+            }
+        )
     }
     
     private func movePaddleTo(point: CGPoint) {
